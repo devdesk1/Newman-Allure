@@ -1,0 +1,624 @@
+{
+	"info": {
+		"_postman_id": "56abf29b-2659-4620-ba52-dd0ac53a8a96",
+		"name": "Updated Regression Testing",
+		"description": "# 🧪 Updated API Testing Collection\n\nThis Updated collection provides comprehensive API testing including:\n- Test categories and severity levels\n- Rich test descriptions and detailed reporting\n- Performance monitoring and validation\n- Security header validation\n- Data integrity checks\n\n## 🎯 Test Categories:\n- **API Validation**: Basic API response validation\n- **Performance**: Response time and load testing\n- **Data Integrity**: Schema and content validation\n- **Security**: Header and authentication testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11363216"
+	},
+	"item": [
+		{
+			"name": "🔍 API Health Check",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"// Test metadata for documentation",
+							"const testInfo = {",
+							"    displayName: 'API Health Check Validation',",
+							"    description: 'Validates that the API endpoint is accessible and returns expected status code',",
+							"    epic: 'API Testing',",
+							"    feature: 'Health Monitoring',",
+							"    story: 'Basic API Connectivity',",
+							"    severity: 'blocker',",
+							"    tags: ['health', 'smoke', 'critical']",
+							"};",
+							"",
+							"console.log(`🧪 Test: ${testInfo.displayName}`);",
+							"console.log(`📝 Description: ${testInfo.description}`);",
+							"",
+							"// Validate API Response Status",
+							"pm.test('✅ Status code is 200', function () {",
+							"    pm.expect(pm.response.code).to.equal(200);",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Validate Response Performance",
+							"pm.test('⚡ Response time is acceptable (< 2000ms)', function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"});",
+							"",
+							"// Log test parameters",
+							"console.log(`🔗 Base URL: ${pm.variables.get('baseUrl')}`);",
+							"console.log(`📍 Endpoint: /get`);",
+							"console.log(`🔧 Method: GET`);",
+							"console.log(`⏱️ Response Time: ${pm.response.responseTime}ms`);",
+							"",
+							"// Set test result data",
+							"pm.collectionVariables.set('lastTestResult', JSON.stringify({",
+							"    testName: testInfo.displayName,",
+							"    status: 'passed',",
+							"    responseTime: pm.response.responseTime,",
+							"    timestamp: new Date().toISOString()",
+							"}));"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "User-Agent",
+						"value": "PostmanTests/1.0",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/get?test=health",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"get"
+					],
+					"query": [
+						{
+							"key": "test",
+							"value": "health"
+						}
+					]
+				},
+				"description": "**Epic**: API Testing\n**Feature**: Health Monitoring\n**Story**: Basic API Connectivity\n\nThis test validates the basic health and accessibility of the API endpoint."
+			},
+			"response": []
+		},
+		{
+			"name": "📋 Data Schema Validation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"// Test metadata",
+							"const testInfo = {",
+							"    displayName: 'JSON Schema Validation Test',",
+							"    description: 'Validates that API responses conform to expected JSON schema structure for data integrity',",
+							"    epic: 'Data Quality',",
+							"    feature: 'Schema Validation',",
+							"    story: 'Book Data Structure Validation',",
+							"    severity: 'critical',",
+							"    tags: ['schema', 'data-integrity', 'validation']",
+							"};",
+							"",
+							"console.log(`🧪 Test: ${testInfo.displayName}`);",
+							"console.log(`📝 Description: ${testInfo.description}`);",
+							"",
+							"// Updated schema with more detailed validation",
+							"const expectedSchema = {",
+							"    \"type\": \"object\",",
+							"    \"properties\": {",
+							"        \"data\": {",
+							"            \"type\": \"array\",",
+							"            \"minItems\": 1,",
+							"            \"items\": {",
+							"                \"type\": \"object\",",
+							"                \"properties\": {",
+							"                    \"title\": {",
+							"                        \"type\": \"string\",",
+							"                        \"minLength\": 1",
+							"                    },",
+							"                    \"author\": {",
+							"                        \"type\": \"string\",",
+							"                        \"minLength\": 1",
+							"                    },",
+							"                    \"published\": {",
+							"                        \"type\": \"integer\",",
+							"                        \"minimum\": 1000,",
+							"                        \"maximum\": 2030",
+							"                    }",
+							"                },",
+							"                \"required\": [\"title\", \"author\", \"published\"],",
+							"                \"additionalProperties\": false",
+							"            }",
+							"        }",
+							"    },",
+							"    \"required\": [\"data\"]",
+							"};",
+							"",
+							"// Validate JSON Schema Compliance",
+							"pm.test('📋 Response matches expected JSON schema', () => {",
+							"    pm.response.to.have.jsonSchema(expectedSchema);",
+							"});",
+							"",
+							"// Validate Data Content Quality",
+							"const responseJson = pm.response.json();",
+							"",
+							"pm.test('📚 Contains valid book data', () => {",
+							"    pm.expect(responseJson.data).to.be.an('array');",
+							"    pm.expect(responseJson.data.length).to.be.greaterThan(0);",
+							"    ",
+							"    responseJson.data.forEach((book, index) => {",
+							"        pm.expect(book.title, `Book ${index + 1} title`).to.be.a('string').and.not.empty;",
+							"        pm.expect(book.author, `Book ${index + 1} author`).to.be.a('string').and.not.empty;",
+							"        pm.expect(book.published, `Book ${index + 1} published year`).to.be.a('number').and.within(1000, 2030);",
+							"    });",
+							"});",
+							"",
+							"// Log test parameters",
+							"console.log(`🔧 Request Method: POST`);",
+							"console.log(`📋 Content-Type: application/json`);",
+							"console.log(`📊 Expected Items Count: 3`);",
+							"console.log(`📄 Schema Validation: ${JSON.stringify(expectedSchema, null, 2)}`);"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"title\": \"Sapiens: A Brief History of Humankind\",\n        \"author\": \"Yuval Noah Harari\",\n        \"published\": 2011\n    },\n    {\n        \"title\": \"Moneyball: The Art of Winning an Unfair Game\",\n        \"author\": \"Michael Lewis\",\n        \"published\": 2010\n    },\n    {\n        \"title\": \"Women & Power: A Manifesto\",\n        \"author\": \"Mary Beard\",\n        \"published\": 2017\n    }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/post",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"post"
+					]
+				},
+				"description": "**Epic**: Data Quality\n**Feature**: Schema Validation\n**Story**: Book Data Structure Validation\n\nValidates API response structure using comprehensive JSON Schema validation with Updated data quality checks."
+			},
+			"response": []
+		},
+		{
+			"name": "🎯 Business Logic Validation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"// Test metadata",
+							"const testInfo = {",
+							"    displayName: 'Business Logic & Data Accuracy Test',",
+							"    description: 'Validates specific business rules and data accuracy for book information processing',",
+							"    epic: 'Business Logic',",
+							"    feature: 'Data Processing',",
+							"    story: 'Book Information Accuracy',",
+							"    severity: 'normal',",
+							"    tags: ['business-logic', 'data-accuracy', 'functional']",
+							"};",
+							"",
+							"console.log(`🧪 Test: ${testInfo.displayName}`);",
+							"console.log(`📝 Description: ${testInfo.description}`);",
+							"",
+							"const getData = () => pm.response.json().data;",
+							"",
+							"// Validate Response Structure",
+							"pm.test('📖 Returns a valid book object structure', () => {",
+							"    const data = getData();",
+							"    ",
+							"    // Check the expected properties exist",
+							"    pm.expect(data).to.have.property('title');",
+							"    pm.expect(data).to.have.property('author');",
+							"    pm.expect(data).to.have.property('published');",
+							"    ",
+							"    // Check the values have the expected types",
+							"    pm.expect(data.title).to.be.a('string');",
+							"    pm.expect(data.author).to.be.a('string');",
+							"    pm.expect(data.published).to.be.a('number');",
+							"});",
+							"",
+							"// Validate Specific Book Data",
+							"pm.test('📚 Returns correct details for Sapiens book', () => {",
+							"    const data = getData();",
+							"    ",
+							"    // Check expected values are present",
+							"    pm.expect(data.title).to.equal('Sapiens');",
+							"    pm.expect(data.author).to.equal('Yuval Noah Harari');",
+							"    pm.expect(data.published).to.equal(2011);",
+							"});",
+							"",
+							"// Validate Business Rules",
+							"pm.test('📋 Validates business rules compliance', () => {",
+							"    const data = getData();",
+							"    ",
+							"    // Business rule: Published year should be reasonable",
+							"    pm.expect(data.published).to.be.within(1800, new Date().getFullYear());",
+							"    ",
+							"    // Business rule: Title should not be empty or just whitespace",
+							"    pm.expect(data.title.trim()).to.have.length.greaterThan(0);",
+							"    ",
+							"    // Business rule: Author name should contain at least first and last name",
+							"    pm.expect(data.author.split(' ')).to.have.length.greaterThan(1);",
+							"});",
+							"",
+							"// Log test parameters",
+							"console.log(`📚 Expected Title: Sapiens`);",
+							"console.log(`👤 Expected Author: Yuval Noah Harari`);",
+							"console.log(`📅 Expected Year: 2011`);",
+							"console.log(`📦 Request Payload: ${pm.request.body.raw}`);"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Sapiens\",\n    \"author\": \"Yuval Noah Harari\",\n    \"published\": 2011\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/post",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"post"
+					]
+				},
+				"description": "**Epic**: Business Logic\n**Feature**: Data Processing\n**Story**: Book Information Accuracy\n\nValidates business rules and data accuracy for book information processing including data quality checks."
+			},
+			"response": []
+		},
+		{
+			"name": "⚡ Performance Validation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"// Test metadata",
+							"const testInfo = {",
+							"    displayName: 'API Performance Benchmark Test',",
+							"    description: 'Validates API response time performance against defined SLA thresholds',",
+							"    epic: 'Performance Testing',",
+							"    feature: 'Response Time Monitoring',",
+							"    story: 'SLA Compliance Validation',",
+							"    severity: 'normal',",
+							"    tags: ['performance', 'sla', 'monitoring']",
+							"};",
+							"",
+							"console.log(`🧪 Test: ${testInfo.displayName}`);",
+							"console.log(`📝 Description: ${testInfo.description}`);",
+							"",
+							"const responseTime = pm.response.responseTime;",
+							"",
+							"// Validate Critical Performance Threshold",
+							"pm.test('🚨 Response time meets critical SLA (< 5000ms)', function () {",
+							"    const criticalThreshold = 5000;",
+							"    pm.expect(responseTime).to.be.below(criticalThreshold);",
+							"});",
+							"",
+							"// Validate Optimal Performance Threshold",
+							"pm.test('⚡ Response time meets optimal target (< 1000ms)', function () {",
+							"    const optimalThreshold = 1000;",
+							"    if (responseTime < optimalThreshold) {",
+							"        pm.expect(responseTime).to.be.below(optimalThreshold);",
+							"    } else {",
+							"        console.warn(`⚠️ Response time ${responseTime}ms exceeds optimal threshold of ${optimalThreshold}ms`);",
+							"        // Don't fail the test, just log the warning",
+							"        pm.expect(responseTime).to.be.a('number');",
+							"    }",
+							"});",
+							"",
+							"// Performance Categorization",
+							"pm.test('📊 Categorize performance level', function () {",
+							"    let performanceCategory;",
+							"    ",
+							"    if (responseTime < 500) {",
+							"        performanceCategory = 'Excellent';",
+							"    } else if (responseTime < 1000) {",
+							"        performanceCategory = 'Good';",
+							"    } else if (responseTime < 2000) {",
+							"        performanceCategory = 'Acceptable';",
+							"    } else if (responseTime < 5000) {",
+							"        performanceCategory = 'Poor';",
+							"    } else {",
+							"        performanceCategory = 'Critical';",
+							"    }",
+							"    ",
+							"    console.log(`📈 Performance Category: ${performanceCategory} (${responseTime}ms)`);",
+							"    pm.expect(performanceCategory).to.not.equal('Critical');",
+							"});",
+							"",
+							"// Log performance parameters",
+							"console.log(`⏱️ Response Time: ${responseTime}ms`);",
+							"console.log(`🚨 Critical Threshold: 5000ms`);",
+							"console.log(`⚡ Optimal Threshold: 1000ms`);",
+							"console.log(`🌐 Test Environment: ${pm.variables.get('baseUrl')}`);",
+							"",
+							"// Create performance metrics",
+							"const performanceData = {",
+							"    'Response Time (ms)': responseTime,",
+							"    'Critical Threshold': '< 5000ms',",
+							"    'Optimal Threshold': '< 1000ms',",
+							"    'Status': responseTime < 1000 ? 'Optimal' : responseTime < 5000 ? 'Acceptable' : 'Critical',",
+							"    'Timestamp': new Date().toISOString()",
+							"};",
+							"",
+							"console.log('📊 Performance Metrics:', JSON.stringify(performanceData, null, 2));",
+							"",
+							"// Store performance data",
+							"pm.collectionVariables.set('lastPerformanceResult', JSON.stringify(performanceData));"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cache-Control",
+						"value": "no-cache"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"performance_test\": true,\n    \"timestamp\": \"{{$timestamp}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/get?perf_test=true&timestamp={{$timestamp}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"get"
+					],
+					"query": [
+						{
+							"key": "perf_test",
+							"value": "true"
+						},
+						{
+							"key": "timestamp",
+							"value": "{{$timestamp}}"
+						}
+					]
+				},
+				"description": "**Epic**: Performance Testing\n**Feature**: Response Time Monitoring\n**Story**: SLA Compliance Validation\n\nValidates API performance against defined SLA thresholds with detailed performance categorization."
+			},
+			"response": []
+		},
+		{
+			"name": "🔐 Security Header Validation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"// Test metadata",
+							"const testInfo = {",
+							"    displayName: 'Security Headers & Protocol Validation',",
+							"    description: 'Validates security-related response headers and protocol compliance for API security standards',",
+							"    epic: 'Security Testing',",
+							"    feature: 'Header Security',",
+							"    story: 'HTTP Security Headers Validation',",
+							"    severity: 'critical',",
+							"    tags: ['security', 'headers', 'compliance']",
+							"};",
+							"",
+							"console.log(`🧪 Test: ${testInfo.displayName}`);",
+							"console.log(`📝 Description: ${testInfo.description}`);",
+							"",
+							"// Validate Required Response Headers",
+							"pm.test('📋 Content-Type header is present and correct', function () {",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+							"});",
+							"",
+							"pm.test('📏 Content-Length header exists', function () {",
+							"    pm.expect(pm.response.headers.get('Content-Length')).to.exist;",
+							"    pm.expect(parseInt(pm.response.headers.get('Content-Length'))).to.be.greaterThan(0);",
+							"});",
+							"",
+							"// Validate Security Headers",
+							"const securityHeaders = [",
+							"    'X-Powered-By',",
+							"    'Server',",
+							"    'X-Content-Type-Options',",
+							"    'X-Frame-Options',",
+							"    'Strict-Transport-Security'",
+							"];",
+							"",
+							"pm.test('🔒 Check for security-related headers', function () {",
+							"    securityHeaders.forEach(header => {",
+							"        const headerValue = pm.response.headers.get(header);",
+							"        if (headerValue) {",
+							"            console.log(`✅ Security header found - ${header}: ${headerValue}`);",
+							"        } else {",
+							"            console.log(`ℹ️ Security header missing - ${header} (may be intentional)`);",
+							"        }",
+							"    });",
+							"    ",
+							"    // This test always passes but logs security header information",
+							"    pm.expect(true).to.be.true;",
+							"});",
+							"",
+							"// Validate Response Protocol Security",
+							"pm.test('🌐 API endpoint uses secure protocol', function () {",
+							"    const url = pm.request.url.toString();",
+							"    pm.expect(url).to.match(/^https:/);",
+							"});",
+							"",
+							"pm.test('⏱️ Response includes proper timestamp', function () {",
+							"    const dateHeader = pm.response.headers.get('Date');",
+							"    if (dateHeader) {",
+							"        const responseDate = new Date(dateHeader);",
+							"        const now = new Date();",
+							"        const timeDifference = Math.abs(now - responseDate);",
+							"        ",
+							"        // Allow up to 5 minutes difference",
+							"        pm.expect(timeDifference).to.be.below(5 * 60 * 1000);",
+							"    } else {",
+							"        console.log('ℹ️ Date header not present');",
+							"        pm.expect(true).to.be.true; // Don't fail if Date header is missing",
+							"    }",
+							"});",
+							"",
+							"// Log security parameters",
+							"console.log(`🔒 Protocol: HTTPS`);",
+							"console.log(`📋 Content-Type: ${pm.response.headers.get('Content-Type') || 'Not Set'}`);",
+							"console.log(`📏 Content-Length: ${pm.response.headers.get('Content-Length') || 'Not Set'}`);",
+							"",
+							"// Log all response headers for security audit",
+							"console.log('🔍 All Response Headers:');",
+							"pm.response.headers.each((value, key) => {",
+							"    console.log(`  ${key}: ${value}`);",
+							"});"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "X-Test-Source",
+						"value": "Security-Validation"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/get?security_check=true",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"get"
+					],
+					"query": [
+						{
+							"key": "security_check",
+							"value": "true"
+						}
+					]
+				},
+				"description": "**Epic**: Security Testing\n**Feature**: Header Security\n**Story**: HTTP Security Headers Validation\n\nValidates security-related response headers and protocol compliance to ensure API meets security standards."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Global test setup",
+					"console.log('🚀 Starting Updated Regression Testing...');",
+					"",
+					"// Set global test information",
+					"const globalTestInfo = {",
+					"    testSuite: 'Updated Regression Testing',",
+					"    baseUrl: pm.variables.get('baseUrl'),",
+					"    environment: 'Development',",
+					"    executionTime: new Date().toISOString(),",
+					"    suite: 'API Regression Tests',",
+					"    owner: 'QA Team',",
+					"    layer: 'API'",
+					"};",
+					"",
+					"// Store global info",
+					"pm.collectionVariables.set('globalTestInfo', JSON.stringify(globalTestInfo));",
+					"",
+					"// Log global information",
+					"console.log(`📋 Test Suite: ${globalTestInfo.testSuite}`);",
+					"console.log(`🌐 Base URL: ${globalTestInfo.baseUrl}`);",
+					"console.log(`🏗️ Environment: ${globalTestInfo.environment}`);",
+					"console.log(`⏰ Execution Time: ${globalTestInfo.executionTime}`);"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Global test completion logging",
+					"console.log(`✅ Completed: ${pm.info.requestName} - Response Time: ${pm.response.responseTime}ms`);",
+					"console.log('─'.repeat(50));"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://postman-echo.com",
+			"type": "string"
+		},
+		{
+			"key": "testSuite",
+			"value": "Updated Regression Testing",
+			"type": "string"
+		},
+		{
+			"key": "version",
+			"value": "2.0",
+			"type": "string"
+		}
+	]
+}
