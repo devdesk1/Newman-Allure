@@ -321,7 +321,7 @@
 							"console.log(`🧪 Test: ${testInfo.displayName}`);",
 							"console.log(`📝 Description: ${testInfo.description}`);",
 							"",
-							"let responseTime = pm.response.responseTime;",
+							"var responseTime = pm.response.responseTime;",
 							"",
 							"// Validate Critical Performance Threshold",
 							"pm.test('🚨 Response time meets critical SLA (< 5000ms)', function () {",
